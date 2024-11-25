@@ -23,7 +23,7 @@ Create a .env file and add your database credentials:
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=your_password
-DB_NAME=your_database_name
+DB_NAME=f1db
 ```
 
 Install dependencies:
