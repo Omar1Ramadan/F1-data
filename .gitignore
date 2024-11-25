@@ -1,0 +1,7 @@
+# Node.js (Server)
+SRC/server/node_modules/
+SRC/server/.env
+
+# Editor/IDE Configuration Files
+.idea/
+.vscode/
