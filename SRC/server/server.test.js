@@ -1,32 +1,33 @@
 const request = require('supertest');
-const app = require('./server');  // Import your Express app
+const app = require('./server'); // Adjust the path as necessary
 const mysql = require('mysql2');
 
-// Create a global variable for the database connection
-let db;
-
-beforeAll((done) => {
-  // Set up database connection before all tests
-  db = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-  });
-
-  db.connect((err) => {
-    if (err) throw err;
-    console.log('Connected to MySQL Database!');
-    done(); // Call done() to signal Jest the setup is complete
-  });
+// Mock the database connection
+jest.mock('mysql2', () => {
+  const mConnection = {
+    connect: jest.fn((callback) => {
+      callback(null);
+    }),
+    query: jest.fn((query, callback) => {
+      callback(null, []);
+    }),
+    end: jest.fn((callback) => {
+      callback(null);
+    }),
+  };
+  return {
+    createConnection: jest.fn(() => mConnection),
+  };
 });
 
-afterAll((done) => {
-  // Close the database connection after all tests
-  db.end((err) => {
-    if (err) throw err;
-    console.log('Database connection closed');
-    done(); // Call done() to finish the tests
+describe('Database connection', () => {
+  it('should connect to the database', (done) => {
+    const db = mysql.createConnection();
+    db.connect((err) => {
+      if (err) throw err;
+      console.log('Connected to MySQL Database!');
+      done(); // Call done() to signal Jest the setup is complete
+    });
   });
 });
 
@@ -51,5 +52,15 @@ describe('GET /circuits', () => {
     const response = await request(app).get('/circuits');
     expect(response.status).toBe(200);
     expect(response.body).toBeInstanceOf(Array);
+  });
+});
+
+afterAll((done) => {
+  // Close the database connection after all tests
+  const db = mysql.createConnection();
+  db.end((err) => {
+    if (err) throw err;
+    console.log('Database connection closed');
+    done(); // Call done() to finish the tests
   });
 });

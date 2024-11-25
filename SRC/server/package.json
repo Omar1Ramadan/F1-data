@@ -4,7 +4,8 @@
   "main": "server.js",
   "scripts": {
     "test": "jest",
-    "start": "node server.js"
+    "dev": "nodemon server.js",
+    "start": "npm run test && npm run dev"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "jest-mock": "^29.7.0",
     "mysql2": "^3.11.4"
   },
   "devDependencies": {

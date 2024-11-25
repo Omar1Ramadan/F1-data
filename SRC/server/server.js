@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const mysql = require('mysql2');
 const path = require('path');
@@ -9,7 +10,7 @@ const PORT = 5000;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 
 // Database Connection
 const db = mysql.createConnection({
@@ -52,6 +53,10 @@ app.get('/circuits', (req, res) => {
   });
 });
 
+app.get('/api', (req, res) => {
+  res.send('Hello from the server!');
+});
+
 // Serve React Static Files (frontend)
 app.use(express.static(path.join(__dirname, '../client/build')));
 
@@ -60,9 +65,11 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Conditionally start the server only if NOT in the test environment
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
 
 module.exports = app;  // Export the app for testing

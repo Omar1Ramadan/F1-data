@@ -31,9 +31,21 @@ Install dependencies:
 npm install
 ```
 
-Start the server:
+**Start the server:**
+
+For running the automated tests & the server:
 ```bash
-node server.js
+npm run start
+```
+
+For running only the automated tests:
+```bash
+npm run test
+```
+
+For running only the server:
+```bash
+npm run dev
 ```
 
 ## Frontend Configuration
