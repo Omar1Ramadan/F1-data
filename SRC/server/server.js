@@ -66,7 +66,6 @@ function handleCrudOperations(table) {
         });
         break;
       case 'POST':
-        console.log(`POST data for ${table}:`, req.body);
         const postColumns = Object.keys(req.body).join(', ');
         const postPlaceholders = Object.keys(req.body).map(() => '?').join(', ');
         const postValues = Object.values(req.body);
@@ -80,7 +79,6 @@ function handleCrudOperations(table) {
         });
         break;
       case 'PUT':
-        console.log(`PUT data for ${table}:`, req.body);
         const putId = req.body[primaryKey];
         const putUpdates = Object.keys(req.body).filter(key => key !== primaryKey).map(key => `${key} = ?`).join(', ');
         const putValues = [...Object.values(req.body).filter((_, index) => Object.keys(req.body)[index] !== primaryKey), putId];
@@ -94,7 +92,6 @@ function handleCrudOperations(table) {
         });
         break;
       case 'DELETE':
-        console.log(`DELETE data for ${table}:`, req.body);
         const deleteId = req.body[primaryKey];
         const deleteQuery = `DELETE FROM ${table} WHERE ${primaryKey} = ?`;
         db.query(deleteQuery, [deleteId], (err, results) => {
@@ -128,8 +125,9 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
 
 module.exports = app; // Ensure this line is added to export the app for testing

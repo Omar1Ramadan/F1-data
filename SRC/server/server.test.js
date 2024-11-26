@@ -3,6 +3,7 @@ const app = require('./server');
 const db = require('./db');
 
 beforeAll(done => {
+  process.env.PORT = 3001; // Use a different port for testing
   db.query('SET FOREIGN_KEY_CHECKS = 0', done);
 });
 
