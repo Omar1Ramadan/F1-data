@@ -5,7 +5,7 @@
   "scripts": {
     "test": "jest",
     "dev": "nodemon server.js",
-    "start": "npm run test && npm run dev"
+    "start": "concurrently \"npm run test\" \"npm run dev\""
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "concurrently": "^8.0.1"
   }
 }
