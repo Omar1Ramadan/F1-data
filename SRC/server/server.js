@@ -103,7 +103,7 @@ app.post('/admin/logout', (req, res) => {
 });
 
 // Admin delete route
-app.delete('/admin', async (req, res) => {
+app.delete('/admin', checkAdmin, async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -288,8 +288,7 @@ app.route('/admin')
     }
   })
   .put(handleCrudOperations('Admin'))
-  .delete(handleCrudOperations('Admin'));
-  
+  .delete(checkAdmin, handleCrudOperations('Admin'));
 
 app.get('/api', (req, res) => {
   res.send('Hello from the server!');
