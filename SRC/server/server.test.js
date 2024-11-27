@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt'); // Import bcrypt
 require('dotenv').config();
 
 let db;
+let agent;
 
 beforeAll(async () => {
   db = await mysql.createConnection({
@@ -23,6 +24,13 @@ afterAll(async () => {
   // Clean up the test admin user
   await db.query('DELETE FROM admin WHERE username = ?', ['test']);
   await db.end();
+});
+
+beforeEach(async () => {
+  agent = request.agent(app);
+
+  // Login before each test
+  await agent.post('/admin/login').send({ username: 'test', password: 'test' });
 });
 
 describe('Admin Authentication', () => {
@@ -45,12 +53,6 @@ describe('Admin Authentication', () => {
   });
 
   it('should logout successfully', async () => {
-    const agent = request.agent(app);
-
-    // Login first
-    await agent.post('/admin/login').send({ username: 'test', password: 'test' });
-
-    // Logout
     const response = await agent.post('/admin/logout');
 
     expect(response.status).toBe(200);
@@ -59,15 +61,6 @@ describe('Admin Authentication', () => {
 });
 
 describe('CRUD Operations', () => {
-  let agent;
-
-  beforeEach(async () => {
-    agent = request.agent(app);
-
-    // Login before each test
-    await agent.post('/admin/login').send({ username: 'test', password: 'test' });
-  });
-
   it('should allow viewing data', async () => {
     const response = await request(app).get('/driver');
 
