@@ -5,7 +5,7 @@ const session = require('express-session');
 const app = express();
 app.use(express.json());
 
-const db = require('./db'); // Ensure this path is correct
+const db = require('./db');
 const { env } = require('process');
 
 // Serve static files from the React app
@@ -25,6 +25,7 @@ function buildQuery(table, params) {
   const values = [];
   const conditions = [];
 
+  // Handle JOIN clauses
   if (params.join) {
     const joins = Array.isArray(params.join) ? params.join : [params.join];
     joins.forEach(join => {
@@ -32,6 +33,7 @@ function buildQuery(table, params) {
     });
   }
 
+  // Handle WHERE clauses
   if (params.where) {
     const whereConditions = Array.isArray(params.where) ? params.where : [params.where];
     whereConditions.forEach(condition => {
@@ -39,14 +41,17 @@ function buildQuery(table, params) {
     });
   }
 
+  // Add conditions to the query
   if (conditions.length > 0) {
     query += ` WHERE ${conditions.join(' AND ')}`;
   }
 
+  // Handle ORDER BY clause
   if (params.orderBy) {
     query += ` ORDER BY ${params.orderBy}`;
   }
 
+  // Handle LIMIT clause
   if (params.limit) {
     query += ` LIMIT ${params.limit}`;
   }
@@ -160,8 +165,6 @@ app.delete('/admin', checkAdmin, async (req, res) => {
 function handleCrudOperations(table) {
   const primaryKey = primaryKeyMap[table];
   return async (req, res) => {
-    console.log(`Handling ${req.method} request for ${table}`);
-
     try {
       switch (req.method) {
         case 'GET': {
@@ -314,7 +317,7 @@ const tables = ['Circuit', 'Driver', 'Constructor', 'Season', 'GrandPrix', 'Main
 tables.forEach(table => {
   app.route(`/${table.toLowerCase()}`)
     .get(handleCrudOperations(table)) // Allow anyone to view
-    .all(checkAdmin)
+    .all(checkAdmin) // Require admin authentication for the following routes
     .post(handleCrudOperations(table)) // Only admins can create
     .put(handleCrudOperations(table)) // Only admins can update
     .delete(handleCrudOperations(table)); // Only admins can delete

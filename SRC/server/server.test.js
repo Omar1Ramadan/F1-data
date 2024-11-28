@@ -1,7 +1,7 @@
 const request = require('supertest');
-const app = require('./server'); // Ensure this path is correct
+const app = require('./server');
 const mysql = require('mysql2/promise');
-const bcrypt = require('bcrypt'); // Import bcrypt
+const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 let db;
@@ -69,17 +69,20 @@ describe('CRUD Operations', () => {
   });
 
   it('should allow admin to create data', async () => {
-    const response = await agent.post('/driver').send({ Name: 'Test Driver', DOB: '1990-01-01', Gender: 'Male' });
+    const response = await agent.post('/driver').send({ Name: 'Test Driver', DOB: '1990-01-01', Gender: 'M' });
 
     console.log('Create Response:', response.body); // Log the response body
     console.log('Create Error:', response.error); // Log the error message
 
     expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty('insertId');
+    expect(response.body).toHaveProperty('insertIds');
   });
 
   it('should allow admin to update data', async () => {
-    const response = await agent.put('/driver').send({ Driver_ID: 1, Name: 'Updated Driver', DOB: '1990-01-01', Gender: 'Male' });
+    // Ensure the record exists before attempting to update it
+    await agent.post('/driver').send({ Driver_ID: 1, Name: 'Test Driver', DOB: '1990-01-01', Gender: 'M' });
+
+    const response = await agent.put('/driver').send({ Driver_ID: 1, Name: 'Updated Driver', DOB: '1990-01-01', Gender: 'M' });
 
     console.log('Update Response:', response.body); // Log the response body
     console.log('Update Error:', response.error); // Log the error message
@@ -90,7 +93,7 @@ describe('CRUD Operations', () => {
 
   it('should allow admin to delete data', async () => {
     // Ensure the record exists before attempting to delete it
-    await agent.post('/driver').send({ Driver_ID: 1, Name: 'Test Driver', DOB: '1990-01-01', Gender: 'Male' });
+    await agent.post('/driver').send({ Driver_ID: 1, Name: 'Test Driver', DOB: '1990-01-01', Gender: 'M' });
 
     const response = await agent.delete('/driver').send({ Driver_ID: 1 });
 
@@ -99,5 +102,104 @@ describe('CRUD Operations', () => {
 
     expect(response.status).toBe(200);
     expect(response.text).toBe('Driver deleted successfully');
+  });
+
+  it('should handle Select + Where + Limit + Join', async () => {
+    const response = await request(app)
+      .get('/driver')
+      .query({
+        join: 'RaceResult ON Driver.Driver_ID = RaceResult.Driver_ID',
+        where: 'RaceResult.Position = 1',
+        limit: 5
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+  });
+
+  it('should handle Select + Where + OrderBy', async () => {
+    const response = await request(app)
+      .get('/driver')
+      .query({
+        where: 'Total_Points > 100',
+        orderBy: 'Total_Points DESC'
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+  });
+
+  it('should handle Select + Where + Join + And', async () => {
+    const response = await request(app)
+      .get('/driver')
+      .query({
+        join: [
+          'DriverEntry ON Driver.Driver_ID = DriverEntry.Driver_ID',
+          'Constructor ON DriverEntry.Constructor_ID = Constructor.Constructor_ID'
+        ],
+        where: "Driver.Gender = 'M' AND Constructor.Country = 'Germany'"
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+  });
+
+  it('should handle Select + Where + OrderBy + Limit', async () => {
+    // Ensure there are records that match the criteria
+    await agent.post('/driver').send({ Name: 'Test Driver', DOB: '1990-01-01', Gender: 'M', Total_Race_Wins: 15 });
+
+    const response = await request(app)
+      .get('/driver')
+      .query({
+        where: 'Total_Race_Wins > 10',
+        orderBy: 'Total_Race_Wins DESC',
+        limit: 10
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+  });
+
+  it('should handle Delete + Where + And', async () => {
+    // Ensure the record exists before attempting to delete it
+    await agent.post('/driver').send({ Name: 'Test Driver', DOB: '1990-01-01', Gender: 'M' });
+
+    const response = await agent.delete('/driver').send({ Name: 'Test Driver', DOB: '1990-01-01' });
+
+    console.log('Delete Response:', response.body); // Log the response body
+    console.log('Delete Error:', response.error); // Log the error message
+
+    expect(response.status).toBe(200);
+    expect(response.text).toBe('Driver deleted successfully');
+  });
+
+  it('should handle Insert Multiple Tuples at Once', async () => {
+    const response = await agent.post('/driver').send([
+      { Name: 'Driver 1', DOB: '1980-01-01', Gender: 'M' },
+      { Name: 'Driver 2', DOB: '1985-01-01', Gender: 'F' },
+      { Name: 'Driver 3', DOB: '1990-01-01', Gender: 'M' }
+    ]);
+
+    console.log('Insert Multiple Response:', response.body); // Log the response body
+    console.log('Insert Multiple Error:', response.error); // Log the error message
+
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty('insertIds');
+    expect(response.body.insertIds).toBeInstanceOf(Array);
+  });
+
+  it('should handle Insert Multiple Tuples at Once with Different Data', async () => {
+    const response = await agent.post('/driver').send([
+      { Name: 'Driver 4', DOB: '1970-01-01', Gender: 'M' },
+      { Name: 'Driver 5', DOB: '1975-01-01', Gender: 'F' },
+      { Name: 'Driver 6', DOB: '1980-01-01', Gender: 'M' }
+    ]);
+
+    console.log('Insert Multiple Response:', response.body); // Log the response body
+    console.log('Insert Multiple Error:', response.error); // Log the error message
+
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty('insertIds');
+    expect(response.body.insertIds).toBeInstanceOf(Array);
   });
 });
