@@ -208,7 +208,18 @@ function handleCrudOperations(table) {
               console.error(`Error creating ${table.toLowerCase()}:`, err);
               return res.status(500).send(`Error creating ${table.toLowerCase()}`);
             }
-            res.status(201).send({ insertId: results.insertId });
+
+            // Retrieve the inserted IDs
+            const insertedIds = [];
+            if (isArray) {
+              for (let i = 0; i < req.body.length; i++) {
+                insertedIds.push(results.insertId + i);
+              }
+            } else {
+              insertedIds.push(results.insertId);
+            }
+
+            res.status(201).send({ insertIds: insertedIds });
           });
           break;
         }
