@@ -25,13 +25,30 @@ function buildQuery(table, params) {
   const values = [];
   const conditions = [];
 
-  Object.keys(params).forEach(key => {
-    conditions.push(`${key} = ?`);
-    values.push(params[key]);
-  });
+  if (params.join) {
+    const joins = Array.isArray(params.join) ? params.join : [params.join];
+    joins.forEach(join => {
+      query += ` JOIN ${join}`;
+    });
+  }
+
+  if (params.where) {
+    const whereConditions = Array.isArray(params.where) ? params.where : [params.where];
+    whereConditions.forEach(condition => {
+      conditions.push(condition);
+    });
+  }
 
   if (conditions.length > 0) {
     query += ` WHERE ${conditions.join(' AND ')}`;
+  }
+
+  if (params.orderBy) {
+    query += ` ORDER BY ${params.orderBy}`;
+  }
+
+  if (params.limit) {
+    query += ` LIMIT ${params.limit}`;
   }
 
   return { query, values };
@@ -154,6 +171,9 @@ function handleCrudOperations(table) {
               console.error(`Error retrieving ${table.toLowerCase()}:`, err);
               return res.status(500).send(`Error retrieving ${table.toLowerCase()}`);
             }
+            if (results.length === 0) {
+              return res.status(404).send(`${table} does not exist`);
+            }
             // Format date fields to return only the date part
             results.forEach(row => {
               Object.keys(row).forEach(key => {
@@ -172,16 +192,17 @@ function handleCrudOperations(table) {
             return res.status(403).send('Access denied');
           }
 
-          const postColumns = Object.keys(req.body).join(', ');
-          const postPlaceholders = Object.keys(req.body).map(() => '?').join(', ');
-          const postValues = Object.values(req.body);
+          const isArray = Array.isArray(req.body);
+          const postColumns = isArray ? Object.keys(req.body[0]).join(', ') : Object.keys(req.body).join(', ');
+          const postPlaceholders = isArray ? req.body.map(() => `(${Object.keys(req.body[0]).map(() => '?').join(', ')})`).join(', ') : `(${Object.keys(req.body).map(() => '?').join(', ')})`;
+          const postValues = isArray ? req.body.flatMap(Object.values) : Object.values(req.body);
 
           // Hash the password if the table is 'Admin'
           if (table === 'Admin' && req.body.password) {
             req.body.password = await bcrypt.hash(req.body.password, 10);
           }
 
-          const postQuery = `INSERT INTO ${table} (${postColumns}) VALUES (${postPlaceholders})`;
+          const postQuery = `INSERT INTO ${table} (${postColumns}) VALUES ${postPlaceholders}`;
           db.query(postQuery, postValues, (err, results) => {
             if (err) {
               console.error(`Error creating ${table.toLowerCase()}:`, err);
@@ -196,27 +217,39 @@ function handleCrudOperations(table) {
           if (!req.session.admin) {
             return res.status(403).send('Access denied');
           }
-        
+
           const putId = req.body[primaryKey];
           const putUpdates = Object.keys(req.body)
             .filter(key => key !== primaryKey && key !== 'password') // Exclude password
             .map(key => `${key} = ?`)
             .join(', ');
-        
+
           const putValues = Object.values(req.body).filter((_, index) => {
             const key = Object.keys(req.body)[index];
             return key !== primaryKey && key !== 'password'; // Exclude password
           });
-        
+
           putValues.push(putId);
-        
-          const putQuery = `UPDATE ${table} SET ${putUpdates} WHERE ${primaryKey} = ?`;
-          db.query(putQuery, putValues, (err, results) => {
+
+          // Check if the record exists before updating
+          const checkQuery = `SELECT 1 FROM ${table} WHERE ${primaryKey} = ? LIMIT 1`;
+          db.query(checkQuery, [putId], (err, results) => {
             if (err) {
-              console.error(`Error updating ${table.toLowerCase()}:`, err);
-              return res.status(500).send(`Error updating ${table.toLowerCase()}`);
+              console.error(`Error checking ${table.toLowerCase()}:`, err);
+              return res.status(500).send(`Error checking ${table.toLowerCase()}`);
             }
-            res.send(`${table} updated successfully`);
+            if (results.length === 0) {
+              return res.status(404).send(`${table} does not exist`);
+            }
+
+            const putQuery = `UPDATE ${table} SET ${putUpdates} WHERE ${primaryKey} = ?`;
+            db.query(putQuery, putValues, (err, results) => {
+              if (err) {
+                console.error(`Error updating ${table.toLowerCase()}:`, err);
+                return res.status(500).send(`Error updating ${table.toLowerCase()}`);
+              }
+              res.send(`${table} updated successfully`);
+            });
           });
           break;
         }
@@ -225,15 +258,31 @@ function handleCrudOperations(table) {
           if (!req.session.admin) {
             return res.status(403).send('Access denied');
           }
-        
-          const deleteId = req.body[primaryKey];
-          const deleteQuery = `DELETE FROM ${table} WHERE ${primaryKey} = ?`;
-          db.query(deleteQuery, [deleteId], (err, results) => {
+
+          const conditions = Object.keys(req.body)
+            .map(key => `${key} = ?`)
+            .join(' AND ');
+          const values = Object.values(req.body);
+
+          // Check if the record exists before deleting
+          const checkQuery = `SELECT 1 FROM ${table} WHERE ${conditions} LIMIT 1`;
+          db.query(checkQuery, values, (err, results) => {
             if (err) {
-              console.error(`Error deleting ${table.toLowerCase()}:`, err);
-              return res.status(500).send(`Error deleting ${table.toLowerCase()}`);
+              console.error(`Error checking ${table.toLowerCase()}:`, err);
+              return res.status(500).send(`Error checking ${table.toLowerCase()}`);
             }
-            res.send(`${table} deleted successfully`);
+            if (results.length === 0) {
+              return res.status(404).send(`${table} does not exist`);
+            }
+
+            const deleteQuery = `DELETE FROM ${table} WHERE ${conditions}`;
+            db.query(deleteQuery, values, (err, results) => {
+              if (err) {
+                console.error(`Error deleting ${table.toLowerCase()}:`, err);
+                return res.status(500).send(`Error deleting ${table.toLowerCase()}`);
+              }
+              res.send(`${table} deleted successfully`);
+            });
           });
           break;
         }
