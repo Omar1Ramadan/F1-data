@@ -11,3 +11,78 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+/* Base styles for light and dark modes */
+
+/* Default (Light Mode) */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --heading-color: #333333;
+  --card-bg: #f8f9fa;
+  --card-text: #343a40;
+  --btn-bg: #f05454;
+  --btn-hover: #d43c3c;
+  --link-color: #007bff;
+}
+
+/* Dark Mode */
+[data-theme="dark"] {
+  --bg-color: #1e1e2f;
+  --text-color: #ffffff;
+  --heading-color: #dddddd;
+  --card-bg: #2a2a3a;
+  --card-text: #ffffff;
+  --btn-bg: #f05454;
+  --btn-hover: #d43c3c;
+  --link-color: #66b2ff;
+}
+
+/* Apply Variables Globally */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  font-family: Arial, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--heading-color);
+}
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Styling for cards or other containers */
+.card {
+  background-color: var(--card-bg);
+  color: var(--card-text);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+button {
+  background-color: var(--btn-bg);
+  color: var(--text-color);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--btn-hover);
+}
+

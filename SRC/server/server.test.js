@@ -35,7 +35,7 @@ beforeEach(async () => {
 
 describe('Admin Authentication', () => {
   it('should login successfully with correct credentials', async () => {
-    const response = await request(app)
+    response = await request(app)
       .post('/admin/login')
       .send({ username: 'test', password: 'test' });
 
