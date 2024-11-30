@@ -5,7 +5,11 @@ const Navbar = ({ theme, toggleTheme, isAuthenticated, onLogout }) => {
   return (
     <nav className="navbar">
       <div className="logo">
-        <a href="/">🏎️ F1 Track</a>
+      <img
+            src={theme === "light" ? "/logo-light.png" : "/logo-dark.png"} // Replace with correct paths
+            alt="F1 Tracks Logo"
+            className="logo-image"
+          />
       </div>
       <ul className="nav-links">
         <li><a href="/">Home</a></li>

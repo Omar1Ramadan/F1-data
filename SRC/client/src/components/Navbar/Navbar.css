@@ -19,15 +19,14 @@
   align-items: center;
 }
 
-/* Navbar Links */
+
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem; /* Reduced gap to move links closer to the logo */
   margin: 0;
   padding: 0;
 }
-
 .nav-links a {
   text-decoration: none;
   color: var(--text-color);
@@ -78,4 +77,11 @@
 .logout-button:hover {
   background-color: #d43c3c;
   transform: translateY(-2px); /* Slight "lift" effect */
+}
+
+/* Logo Image Styling */
+.logo img {
+  height: 60px; /* Adjust the height as needed */
+  width: 60px; /* Stretch out the image */
+  margin-right: 1rem; /* Space between image and text */
 }

@@ -2,7 +2,10 @@ const express = require('express');
 const path = require('path');
 const session = require('express-session');
 const app = express();
+const cors = require("cors");
+
 app.use(express.json());
+app.use(cors())
 
 const { env } = require('process');
 const adminRoutes = require('./routes/admin');
