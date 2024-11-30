@@ -12,32 +12,31 @@ code {
     monospace;
 }
 
-
-/* Base styles for light and dark modes */
-
-/* Default (Light Mode) */
 :root {
-  --bg-color: #ffffff;
-  --text-color: #000000;
-  --heading-color: #333333;
-  --card-bg: #f8f9fa;
-  --card-text: #343a40;
-  --btn-bg: #f05454;
-  --btn-hover: #d43c3c;
-  --link-color: #007bff;
+  --bg-color: #f4f4f4; /* Slightly darker than pure white */
+  --text-color: #1a1a1a; /* Slightly darker black for text */
+  --heading-color: #2a2a2a; /* Darker gray for headings */
+  --card-bg: #eaeaea; /* Light gray for cards */
+  --card-text: #2e2e2e; /* Dark gray for card text */
+  --btn-bg: #e63946; /* A richer red for buttons */
+  --btn-hover: #d62839; /* Slightly darker red on hover */
+  --link-color: #0056b3; /* Darker blue for links */
+  --pattern-opacity: 0.2; /* Increased opacity for pattern visibility */
 }
 
-/* Dark Mode */
+/* Dark Mode Styling */
 [data-theme="dark"] {
-  --bg-color: #1e1e2f;
-  --text-color: #ffffff;
-  --heading-color: #dddddd;
-  --card-bg: #2a2a3a;
-  --card-text: #ffffff;
-  --btn-bg: #f05454;
-  --btn-hover: #d43c3c;
-  --link-color: #66b2ff;
+  --bg-color: #1e1e1e;
+  --text-color: #d1d5db;
+  --heading-color: #ffffff;
+  --card-bg: #2a2a2a;
+  --card-text: #e5e7eb;
+  --btn-bg: #10b981;
+  --btn-hover: #059669;
+  --link-color: #22c55e;
+  --pattern-opacity: 0.1; /* Reduced opacity for dark mode */
 }
+
 
 /* Apply Variables Globally */
 body {
@@ -52,17 +51,6 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--heading-color);
 }
 
-a {
-  color: var(--link-color);
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-/* Styling for cards or other containers */
 .card {
   background-color: var(--card-bg);
   color: var(--card-text);
@@ -74,7 +62,7 @@ a:hover {
 
 button {
   background-color: var(--btn-bg);
-  color: var(--text-color);
+  color: white;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 5px;
@@ -86,3 +74,12 @@ button:hover {
   background-color: var(--btn-hover);
 }
 
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  text-decoration: underline;
+}
