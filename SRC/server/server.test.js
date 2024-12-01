@@ -42,7 +42,7 @@ describe('Admin Authentication', () => {
 
     expect(response.status).toBe(200);
     console.log(response);
-    expect(response.body).toBe('Login successful');
+    expect(response.text).toBe('Login successful');
   });
 
   it('should fail to login with incorrect credentials', async () => {
@@ -172,7 +172,7 @@ describe('CRUD Operations', () => {
     console.log('Delete Error:', response.error); // Log the error message
 
     expect(response.status).toBe(200);
-    expect(response.body).toBe('Driver deleted successfully');
+    expect(response.text).toBe('Driver deleted successfully');
   });
 
   it('should handle Insert Multiple Tuples at Once', async () => {
