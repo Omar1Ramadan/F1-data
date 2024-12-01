@@ -31,7 +31,7 @@ router.post('/login', (req, res) => {
     }
 
     req.session.admin = admin;
-    res.status(200).json( { message: 'Login successful' });
+    res.status(200).json({ message: 'Login successful' });
   });
 });
 

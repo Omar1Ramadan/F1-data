@@ -10,7 +10,6 @@ app.use(cors({
   credentials: true
 }));
 
-const { env } = require('process');
 const adminRoutes = require('./routes/admin');
 const crudRoutes = require('./routes/crud');
 
@@ -39,8 +38,8 @@ app.get('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-module.exports = app; // Ensure this line is added to export the app for testing
+module.exports = { app, server }; // Ensure this line is added to export the app for testing

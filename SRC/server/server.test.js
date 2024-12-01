@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('./server');
+const { app, server } = require('./server');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
@@ -21,6 +21,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await server.close();
   // Clean up the test admin user
   await db.query('DELETE FROM admin WHERE username = ?', ['test']);
   await db.end();
@@ -40,7 +41,8 @@ describe('Admin Authentication', () => {
       .send({ username: 'test', password: 'test' });
 
     expect(response.status).toBe(200);
-    expect(response.text).toBe('Login successful');
+    console.log(response);
+    expect(response.body).toBe('Login successful');
   });
 
   it('should fail to login with incorrect credentials', async () => {
@@ -170,7 +172,7 @@ describe('CRUD Operations', () => {
     console.log('Delete Error:', response.error); // Log the error message
 
     expect(response.status).toBe(200);
-    expect(response.text).toBe('Driver deleted successfully');
+    expect(response.body).toBe('Driver deleted successfully');
   });
 
   it('should handle Insert Multiple Tuples at Once', async () => {

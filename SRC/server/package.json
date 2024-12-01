@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "dev": "nodemon server.js",
     "start": "concurrently \"npm run test\" \"npm run dev\""
   },

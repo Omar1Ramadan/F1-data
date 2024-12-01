@@ -60,6 +60,7 @@ function handleCrudOperations(table) {
           const postValues = isArray ? req.body.flatMap(Object.values) : Object.values(req.body);
 
           const postQuery = `INSERT INTO ${table} (${postColumns}) VALUES ${postPlaceholders}`;
+          
           db.query(postQuery, postValues, (err, results) => {
             if (err) {
               console.error(`Error creating ${table.toLowerCase()}:`, err);
