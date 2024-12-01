@@ -9,7 +9,7 @@ const RaceCard = () => {
   useEffect(() => {
     const fetchRaces = async () => {
       try {
-        const response = await fetch("http://localhost:5000/mainrace?");
+        const response = await fetch("mainrace?");
         if (!response.ok) {
           throw new Error("Failed to fetch race data.");
         }

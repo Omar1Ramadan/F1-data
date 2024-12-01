@@ -8,7 +8,7 @@ const SeasonCard = () => {
   useEffect(() => {
     // Fetch data from the API
     axios
-      .get("http://localhost:5000/season?Season_ID=1959") // Update the endpoint as needed
+      .get("/season?Season_ID=1959") // Update the endpoint as needed
       .then((response) => {
         setSeasons(response.data); // Assuming the API returns an array
       })

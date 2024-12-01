@@ -60,7 +60,7 @@
 
 ## Notes
 
-- The backend runs on [http://localhost:5000](http://localhost:5000).
+- The backend runs on [http://localhost:5000](http://localhost:5000) by default (edit by including a PORT num in your .env file)
 - The React app runs on [http://localhost:3000](http://localhost:3000) during development.
 
 ## Database Setup

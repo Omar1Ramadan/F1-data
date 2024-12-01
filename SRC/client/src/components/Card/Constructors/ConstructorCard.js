@@ -18,7 +18,7 @@ const ConstructorCard = () => {
   useEffect(() => {
     const fetchConstructors = async () => {
       try {
-        const response = await fetch("http://localhost:5000/constructor");
+        const response = await fetch("/constructor");
         if (!response.ok) {
           throw new Error("Failed to fetch constructor data.");
         }

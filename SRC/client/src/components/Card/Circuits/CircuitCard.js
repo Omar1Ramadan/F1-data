@@ -9,7 +9,7 @@ const CircuitCard = () => {
   useEffect(() => {
     const fetchCircuits = async () => {
       try {
-        const response = await fetch("http://localhost:5000/circuit"); // Adjust endpoint as per your API
+        const response = await fetch("/circuit"); // Adjust endpoint as per your API
         if (!response.ok) {
           throw new Error("Failed to fetch circuit data.");
         }

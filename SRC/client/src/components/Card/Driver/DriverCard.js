@@ -9,7 +9,7 @@ const DriverCard = () => {
   useEffect(() => {
     const fetchDrivers = async () => {
       try {
-        const response = await fetch("http://localhost:5000/driver");
+        const response = await fetch("/driver");
         if (!response.ok) {
           throw new Error("Failed to fetch driver data.");
         }
