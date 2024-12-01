@@ -3,13 +3,12 @@ import Navbar from "./components/Navbar/Navbar";
 import Login from "./components/Login/Login";
 import SeasonCard from "./components/Card/Season/SeasonCard";
 import Navigation from "./components/Navigation/Navigation";
-import DriverCard from './components/Card/Driver/DriverCard'
-import MainRace from './components/Card/MainRace/MainRace'
+import DriverCard from "./components/Card/Driver/DriverCard";
+import MainRace from "./components/Card/MainRace/MainRace";
 import ConstructorCard from "./components/Card/Constructors/ConstructorCard";
 import CircuitCard from "./components/Card/Circuits/CircuitCard";
 
 import "./index.css";
-
 
 function App() {
   const [theme, setTheme] = useState("light");
@@ -17,26 +16,28 @@ function App() {
 
   useEffect(() => {
     const savedAuthState = localStorage.getItem("isAuthenticated") === "true";
-    setIsAuthenticated(savedAuthState);
+    if (savedAuthState) {
+      setIsAuthenticated(true); // Keep the user authenticated
+    }
   }, []);
-
+  
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
     localStorage.setItem("isAuthenticated", "true");
   };
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.setItem("isAuthenticated", "false");
+    localStorage.removeItem("isAuthenticated"); // Remove authentication state
+    setIsAuthenticated(false); // Update the state
   };
+  
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
     document.documentElement.setAttribute("data-theme", newTheme);
   };
-  
+
   const [selectedType, setSelectedType] = useState("season");
 
   const handleSelect = (type) => {
@@ -76,10 +77,11 @@ function App() {
           <div className="card-container">{renderCard()}</div>
         </div>
       ) : (
-        <Login 
-        onLoginSuccess={handleLoginSuccess} 
-        theme={theme} 
-        toggleTheme={toggleTheme} />
+        <Login
+          onLoginSuccess={handleLoginSuccess}
+          theme={theme}
+          toggleTheme={toggleTheme}
+        />
       )}
     </div>
   );
