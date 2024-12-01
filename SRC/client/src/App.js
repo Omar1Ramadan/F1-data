@@ -4,8 +4,12 @@ import Login from "./components/Login/Login";
 import SeasonCard from "./components/Card/Season/SeasonCard";
 import Navigation from "./components/Navigation/Navigation";
 import DriverCard from './components/Card/Driver/DriverCard'
+import MainRace from './components/Card/MainRace/MainRace'
+import ConstructorCard from "./components/Card/Constructors/ConstructorCard";
+import CircuitCard from "./components/Card/Circuits/CircuitCard";
 
 import "./index.css";
+
 
 function App() {
   const [theme, setTheme] = useState("light");
@@ -45,6 +49,12 @@ function App() {
         return <SeasonCard />;
       case "driver":
         return <DriverCard />;
+      case "mainRace":
+        return <MainRace />;
+      case "constructor":
+        return <ConstructorCard />;
+      case "circuit":
+        return <CircuitCard />;
       default:
         return <p>Select a category to view data</p>;
     }
