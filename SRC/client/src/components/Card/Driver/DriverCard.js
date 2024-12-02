@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "./DriverCard.css";
 
+const ENDPOINTS = [
+  String.raw("/driver"), 
+  String.raw("/driver?join=RaceResult%20ON%20Driver.Driver_ID%20%3D%20RaceResult.Driver_ID&where=RaceResult.Position%20%3D%201&limit=5"),
+  String.raw("/driver?where=Total_Points%20%3E%20100&orderBy=Total_Points%20DESC"),
+  String.raw("/driver?join=DriverEntry%20ON%20Driver.Driver_ID%20%3D%20DriverEntry.Driver_ID&join=Constructor%20ON%20DriverEntry.Constructor_ID%20%3D%20Constructor.Constructor_ID&where=Driver.Gender%20%3D%20'M'%20AND%20Constructor.Country%20%3D%20'Germany"),
+  String.raw("/driver?where=Total_Race_Wins%20%3E%207&orderBy=Total_Race_Wins%20DESC&limit=10"),
+  String.raw("/Constructor?where=Total_Race_Wins%20%3E%2022&orderBy=Total_Race_Wins%20DESC&limit=10")
+]
+
 const DriverCard = () => {
   const [drivers, setDrivers] = useState([]);
   const [error, setError] = useState(null);
@@ -17,11 +26,12 @@ const DriverCard = () => {
     Total_Race_Wins: 0,
     Total_Points: 0,
   });
+  const [endpointIndex, setEndpointIndex] = useState(0);
 
   useEffect(() => {
     const fetchDrivers = async () => {
       try {
-        const response = await fetch("/driver");
+        const response = await fetch(ENDPOINTS[endpointIndex]);
         if (!response.ok) {
           throw new Error("Failed to fetch driver data.");
         }
@@ -35,7 +45,7 @@ const DriverCard = () => {
     };
 
     fetchDrivers();
-  }, []);
+  }, [endpointIndex]);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -57,7 +67,7 @@ const DriverCard = () => {
 
   const handleDelete = async (driverId) => {
     try {
-      const response = await fetch(`http://localhost:5000/driver/${driverId}`, {
+      const response = await fetch(`/driver/${driverId}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -72,7 +82,7 @@ const DriverCard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/driver", {
+      const response = await fetch("/driver", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,6 +111,10 @@ const DriverCard = () => {
     }
   };
 
+  const handlePress = () => {
+    setEndpointIndex((prev) => (prev + 1) % ENDPOINTS.length);
+  }
+
   if (loading) {
     return <p>Loading driver data...</p>;
   }
@@ -115,6 +129,7 @@ const DriverCard = () => {
         <button className="open-modal-btn" onClick={openModal}>
           Add New Driver
         </button>
+        <button onClick={handlePress}>next</button>
       </div>
       <div className="card-container">
         {drivers.map((driver) => (
