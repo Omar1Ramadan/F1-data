@@ -6,14 +6,17 @@ const ConstructorCard = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newConstructor, setNewConstructor] = useState({
-    Name: "",
-    Country: "",
-    Total_Championships: 0,
-    Total_Race_Entries: 0,
-    Total_Race_Wins: 0,
-    Total_Points: 0,
-  });
+  const [newConstructors, setNewConstructors] = useState([
+    {
+      Name: "",
+      Country: "",
+      Date_of_First_Debut: "",
+      Total_Championships: 0,
+      Total_Race_Entries: 0,
+      Total_Race_Wins: 0,
+      Total_Points: 0,
+    },
+  ]);
 
   useEffect(() => {
     const fetchConstructors = async () => {
@@ -44,12 +47,32 @@ const ConstructorCard = () => {
     document.body.classList.remove("modal-open");
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewConstructor((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleInputChange = (index, field, value) => {
+    const updatedConstructors = [...newConstructors];
+    updatedConstructors[index][field] = value;
+    setNewConstructors(updatedConstructors);
+  };
+
+  const addConstructorField = () => {
+    setNewConstructors([
+      ...newConstructors,
+      {
+        Name: "",
+        Country: "",
+        Date_of_First_Debut: "",
+        Total_Championships: 0,
+        Total_Race_Entries: 0,
+        Total_Race_Wins: 0,
+        Total_Points: 0,
+      },
+    ]);
+  };
+
+  const removeConstructorField = (index) => {
+    const updatedConstructors = newConstructors.filter(
+      (_, idx) => idx !== index
+    );
+    setNewConstructors(updatedConstructors);
   };
 
   const handleSubmit = async (e) => {
@@ -60,28 +83,29 @@ const ConstructorCard = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newConstructor),
+        body: JSON.stringify(newConstructors),
       });
       if (!response.ok) {
-        throw new Error("Failed to create a new constructor.");
+        throw new Error("Failed to add constructors.");
       }
-      const savedConstructor = await response.json();
-      setConstructors((prev) => [...prev, savedConstructor]);
+      const savedConstructors = await response.json();
+      setConstructors((prev) => [...prev, ...savedConstructors]);
       closeModal();
-      setNewConstructor({
-        Name: "",
-        Country: "",
-        Total_Championships: 0,
-        Total_Race_Entries: 0,
-        Total_Race_Wins: 0,
-        Total_Points: 0,
-      });
+      setNewConstructors([
+        {
+          Name: "",
+          Country: "",
+          Date_of_First_Debut: "",
+          Total_Championships: 0,
+          Total_Race_Entries: 0,
+          Total_Race_Wins: 0,
+          Total_Points: 0,
+        },
+      ]);
     } catch (err) {
       setError(err.message);
     }
   };
-  
-  
 
   if (loading) {
     return <p>Loading constructor data...</p>;
@@ -95,93 +119,123 @@ const ConstructorCard = () => {
     <div className="constructor-page">
       <div className="header">
         <button className="open-modal-btn" onClick={openModal}>
-          Add New Constructor
+          Add Multiple Constructors
         </button>
       </div>
       <div className="constructor-card-container">
         {constructors.map((constructor) => (
           <div key={constructor.Constructor_ID} className="card">
             <h3>{constructor.Name}</h3>
-            <p><strong>Country:</strong> {constructor.Country}</p>
-            <p><strong>Date of First Debut:</strong> {constructor.Date_of_First_Debut}</p>
-            <p><strong>Total Championships:</strong> {constructor.Total_Championships}</p>
-            <p><strong>Total Race Entries:</strong> {constructor.Total_Race_Entries}</p>
-            <p><strong>Total Race Wins:</strong> {constructor.Total_Race_Wins}</p>
-            <p><strong>Total Points:</strong> {constructor.Total_Points}</p>
+            <p>
+              <strong>Country:</strong> {constructor.Country}
+            </p>
+            <p>
+              <strong>Date of First Debut:</strong>{" "}
+              {constructor.Date_of_First_Debut}
+            </p>
+            <p>
+              <strong>Total Championships:</strong>{" "}
+              {constructor.Total_Championships}
+            </p>
+            <p>
+              <strong>Total Race Entries:</strong>{" "}
+              {constructor.Total_Race_Entries}
+            </p>
+            <p>
+              <strong>Total Race Wins:</strong> {constructor.Total_Race_Wins}
+            </p>
+            <p>
+              <strong>Total Points:</strong> {constructor.Total_Points}
+            </p>
           </div>
         ))}
       </div>
+
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">
-            <h2>Add New Constructor</h2>
+            <h2>Add Multiple Constructors</h2>
             <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Name:</label>
-                <input
-                  type="text"
-                  name="Name"
-                  value={newConstructor.Name}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Country:</label>
-                <input
-                  type="text"
-                  name="Country"
-                  value={newConstructor.Country}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Total Championships:</label>
-                <input
-                  type="number"
-                  name="Total_Championships"
-                  value={newConstructor.Total_Championships}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Total Race Entries:</label>
-                <input
-                  type="number"
-                  name="Total_Race_Entries"
-                  value={newConstructor.Total_Race_Entries}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Total Race Wins:</label>
-                <input
-                  type="number"
-                  name="Total_Race_Wins"
-                  value={newConstructor.Total_Race_Wins}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Total Points:</label>
-                <input
-                  type="number"
-                  name="Total_Points"
-                  value={newConstructor.Total_Points}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <button type="submit">Submit</button>
+              {newConstructors.map((constructor, index) => (
+                <div key={index} className="form-group">
+                  <label>Name:</label>
+                  <input
+                    type="text"
+                    value={constructor.Name}
+                    onChange={(e) =>
+                      handleInputChange(index, "Name", e.target.value)
+                    }
+                    required
+                  />
+                  <label>Country:</label>
+                  <input
+                    type="text"
+                    value={constructor.Country}
+                    onChange={(e) =>
+                      handleInputChange(index, "Country", e.target.value)
+                    }
+                    required
+                  />
+                  <label>Date of First Debut:</label>
+                  <input
+                    type="date"
+                    value={constructor.Date_of_First_Debut}
+                    onChange={(e) =>
+                      handleInputChange(index, "Date_of_First_Debut", e.target.value)
+                    }
+                  />
+                  <label>Total Championships:</label>
+                  <input
+                    type="number"
+                    value={constructor.Total_Championships}
+                    onChange={(e) =>
+                      handleInputChange(index, "Total_Championships", e.target.value)
+                    }
+                  />
+                  <label>Total Race Entries:</label>
+                  <input
+                    type="number"
+                    value={constructor.Total_Race_Entries}
+                    onChange={(e) =>
+                      handleInputChange(index, "Total_Race_Entries", e.target.value)
+                    }
+                  />
+                  <label>Total Race Wins:</label>
+                  <input
+                    type="number"
+                    value={constructor.Total_Race_Wins}
+                    onChange={(e) =>
+                      handleInputChange(index, "Total_Race_Wins", e.target.value)
+                    }
+                  />
+                  <label>Total Points:</label>
+                  <input
+                    type="number"
+                    value={constructor.Total_Points}
+                    onChange={(e) =>
+                      handleInputChange(index, "Total_Points", e.target.value)
+                    }
+                  />
+                  {newConstructors.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeConstructorField(index)}
+                      className="remove-btn"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              ))}
               <button
                 type="button"
-                className="close-modal-btn"
-                onClick={closeModal}
+                onClick={addConstructorField}
+                className="add-btn"
               >
+                Add Another Constructor
+              </button>
+              <button type="submit">Submit</button>
+              <button type="button" onClick={closeModal} className="close-btn">
                 Close
               </button>
             </form>
