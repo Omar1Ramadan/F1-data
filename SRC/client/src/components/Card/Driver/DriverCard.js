@@ -5,10 +5,19 @@ const ENDPOINTS = [
   "/driver", 
   "/driver?join=RaceResult%20ON%20Driver.Driver_ID%20%3D%20RaceResult.Driver_ID&where=RaceResult.Position%20%3D%201&limit=5",
   "/driver?where=Total_Points%20%3E%20100&orderBy=Total_Points%20DESC",
-  "/driver?join=DriverEntry%20ON%20Driver.Driver_ID%20%3D%20DriverEntry.Driver_ID&join=Constructor%20ON%20DriverEntry.Constructor_ID%20%3D%20Constructor.Constructor_ID&where=Driver.Gender%20%3D%20'M'%20AND%20Constructor.Country%20%3D%20'Germany",
+  "/driver?join=DriverEntry%20ON%20Driver.Driver_ID%20%3D%20DriverEntry.Driver_ID&join=Constructor%20ON%20DriverEntry.Constructor_ID%20%3D%20Constructor.Constructor_ID&where=Driver.Gender%20%3D%20'M'%20AND%20Constructor.Country%20%3D%20'Germany'",
   "/driver?where=Total_Race_Wins%20%3E%207&orderBy=Total_Race_Wins%20DESC&limit=10",
   "/Constructor?where=Total_Race_Wins%20%3E%2022&orderBy=Total_Race_Wins%20DESC&limit=10"
 ]
+
+const titles = [
+  "All Drivers",
+  "Top 5 Winning Drivers",
+  "Drivers with More than 100 Points",
+  "Male Drivers from Germany",
+  "Drivers with More than 7 Race Wins",
+  "Constructors with More than 22 Race Wins"
+];
 
 const DriverCard = () => {
   const [drivers, setDrivers] = useState([]);
@@ -129,7 +138,7 @@ const DriverCard = () => {
         <button className="open-modal-btn" onClick={openModal}>
           Add New Driver
         </button>
-        <button onClick={handlePress}>next</button>
+        <button onClick={handlePress}>{titles[endpointIndex]}</button>
       </div>
       <div className="card-container">
         {drivers.map((driver) => (
