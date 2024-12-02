@@ -8,6 +8,7 @@ const Navigation = ({ onSelect }) => {
     { id: "mainRace", label: "Main Races" },
     { id: "constructor", label: "Constructors" },
     { id: "circuit", label: "Circuits" },
+    { id: "driver-entry", label: "Driver Entry"}
   ];
 
   return (

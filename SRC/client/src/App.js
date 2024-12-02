@@ -7,6 +7,7 @@ import DriverCard from "./components/Card/Driver/DriverCard";
 import MainRace from "./components/Card/MainRace/MainRace";
 import ConstructorCard from "./components/Card/Constructors/ConstructorCard";
 import CircuitCard from "./components/Card/Circuits/CircuitCard";
+import DriverEntryCard from "./components/Card/DriverEntry/DriverEntry";
 
 import "./index.css";
 
@@ -56,6 +57,8 @@ function App() {
         return <ConstructorCard />;
       case "circuit":
         return <CircuitCard />;
+      case "driver-entry":
+        return <DriverEntryCard />;
       default:
         return <p>Select a category to view data</p>;
     }
