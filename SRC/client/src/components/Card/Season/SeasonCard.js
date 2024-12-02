@@ -1,31 +1,132 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./SeasonCard.css"; // Import CSS for styling
+import "./SeasonCard.css";
 
 const SeasonCard = () => {
   const [seasons, setSeasons] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newSeason, setNewSeason] = useState({
+    Season_ID: "",
+    Driver_Winner: "",
+    Constructor_Winner: "",
+  });
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch data from the API
-    axios
-      .get("/season?Season_ID=1959") // Update the endpoint as needed
-      .then((response) => {
-        setSeasons(response.data); // Assuming the API returns an array
-      })
-      .catch((error) => {
-        console.error("Error fetching seasons:", error);
-      });
+    const fetchSeasons = async () => {
+      try {
+        const response = await axios.get("/season");
+        setSeasons(response.data);
+      } catch (err) {
+        setError("Failed to fetch season data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSeasons();
   }, []);
 
+  const openModal = () => {
+    setIsModalOpen(true);
+    document.body.classList.add("modal-open");
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    document.body.classList.remove("modal-open");
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewSeason((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("/season", newSeason);
+      setSeasons((prev) => [...prev, response.data]);
+      closeModal();
+      setNewSeason({
+        Season_ID: "",
+        Driver_Winner: "",
+        Constructor_Winner: "",
+      });
+    } catch (err) {
+      setError("Failed to create a new season.");
+    }
+  };
+
+  if (loading) return <p>Loading seasons...</p>;
+  if (error) return <p className="error">{error}</p>;
+
   return (
-    <div className="season-container">
-      {seasons.map((season) => (
-        <div key={season.Season_ID} className="season-card">
-          <h3>Season: {season.Season_ID}</h3>
-          <p>Driver Winner ID: {season.Driver_Winner}</p>
-          <p>Constructor Winner ID: {season.Constructor_Winner}</p>
+    <div className="season-page">
+      <div className="header">
+        <button className="open-modal-btn" onClick={openModal}>
+          Add New Season
+        </button>
+      </div>
+      <div className="season-card-container">
+        {seasons.map((season) => (
+          <div key={season.Season_ID} className="season-card">
+            <h3>Season: {season.Season_ID}</h3>
+            <p><strong>Driver Winner ID:</strong> {season.Driver_Winner}</p>
+            <p><strong>Constructor Winner ID:</strong> {season.Constructor_Winner}</p>
+          </div>
+        ))}
+      </div>
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Add New Season</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Season ID:</label>
+                <input
+                  type="text"
+                  name="Season_ID"
+                  value={newSeason.Season_ID}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Driver Winner:</label>
+                <input
+                  type="text"
+                  name="Driver_Winner"
+                  value={newSeason.Driver_Winner}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Constructor Winner:</label>
+                <input
+                  type="text"
+                  name="Constructor_Winner"
+                  value={newSeason.Constructor_Winner}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <button type="submit" className="submit-btn">Submit</button>
+              <button
+                type="button"
+                className="close-modal-btn"
+                onClick={closeModal}
+              >
+                Close
+              </button>
+            </form>
+          </div>
         </div>
-      ))}
+      )}
     </div>
   );
 };
