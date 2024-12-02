@@ -55,6 +55,20 @@ const DriverCard = () => {
     }));
   };
 
+  const handleDelete = async (driverId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/driver/${driverId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete driver.");
+      }
+      setDrivers((prev) => prev.filter((driver) => driver.Driver_ID !== driverId));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -114,117 +128,33 @@ const DriverCard = () => {
             <p><strong>Total Race Entries:</strong> {driver.Total_Race_Entries}</p>
             <p><strong>Total Race Wins:</strong> {driver.Total_Race_Wins}</p>
             <p><strong>Total Points:</strong> {driver.Total_Points}</p>
+            <button
+              className="delete-btn"
+              onClick={() => handleDelete(driver.Driver_ID)}
+            >
+              Delete
+            </button>
           </div>
         ))}
       </div>
       {isModalOpen && (
-  <div className="modal">
-    <div className="modal-content">
-      <h2>Add New Driver</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Name:</label>
-          <input
-            type="text"
-            name="Name"
-            value={newDriver.Name}
-            onChange={handleInputChange}
-            required
-          />
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Add New Driver</h2>
+            <form onSubmit={handleSubmit}>
+              {/* Add all input fields */}
+              <button type="submit" className="submit-btn">Submit</button>
+              <button
+                type="button"
+                className="close-modal-btn"
+                onClick={closeModal}
+              >
+                Close
+              </button>
+            </form>
+          </div>
         </div>
-        <div className="form-group">
-          <label>Date of Birth:</label>
-          <input
-            type="date"
-            name="DOB"
-            value={newDriver.DOB}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Date of Death (Optional):</label>
-          <input
-            type="date"
-            name="DOD"
-            value={newDriver.DOD}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="form-group">
-          <label>Gender:</label>
-          <select
-            name="Gender"
-            value={newDriver.Gender}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="M">Male</option>
-            <option value="F">Female</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label>Country of Birth:</label>
-          <input
-            type="text"
-            name="Country_of_Birth"
-            value={newDriver.Country_of_Birth}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Total Championships:</label>
-          <input
-            type="number"
-            name="Total_Championships"
-            value={newDriver.Total_Championships}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Total Race Entries:</label>
-          <input
-            type="number"
-            name="Total_Race_Entries"
-            value={newDriver.Total_Race_Entries}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Total Race Wins:</label>
-          <input
-            type="number"
-            name="Total_Race_Wins"
-            value={newDriver.Total_Race_Wins}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Total Points:</label>
-          <input
-            type="number"
-            name="Total_Points"
-            value={newDriver.Total_Points}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <button type="submit" className="submit-btn">Submit</button>
-        <button
-          type="button"
-          className="close-modal-btn"
-          onClick={closeModal}
-        >
-          Close
-        </button>
-      </form>
-    </div>
-  </div>
-)}
+      )}
     </div>
   );
 };

@@ -61,6 +61,15 @@ const SeasonCard = () => {
     }
   };
 
+  const handleDelete = async (seasonId) => {
+    try {
+      await axios.delete(`/season/${seasonId}`);
+      setSeasons((prev) => prev.filter((season) => season.Season_ID !== seasonId));
+    } catch (err) {
+      setError("Failed to delete the season.");
+    }
+  };
+
   if (loading) return <p>Loading seasons...</p>;
   if (error) return <p className="error">{error}</p>;
 
@@ -77,6 +86,12 @@ const SeasonCard = () => {
             <h3>Season: {season.Season_ID}</h3>
             <p><strong>Driver Winner ID:</strong> {season.Driver_Winner}</p>
             <p><strong>Constructor Winner ID:</strong> {season.Constructor_Winner}</p>
+            <button
+              className="delete-btn"
+              onClick={() => handleDelete(season.Season_ID)}
+            >
+              Delete
+            </button>
           </div>
         ))}
       </div>

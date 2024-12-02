@@ -63,7 +63,7 @@ function App() {
         return <p>Select a category to view data</p>;
     }
   };
-
+  
   return (
     <div>
       <Navbar

@@ -62,6 +62,17 @@ const MainRace = () => {
     }
   };
 
+  const handleDelete = async (raceId) => {
+    try {
+      await axios.delete("/mainrace", {
+        data: { Race_ID: raceId },
+      });
+      setRaces((prev) => prev.filter((race) => race.Race_ID !== raceId));
+    } catch (err) {
+      setError("Failed to delete the race.");
+    }
+  };
+
   if (loading) return <p>Loading races...</p>;
   if (error) return <p className="error">{error}</p>;
 
@@ -78,6 +89,12 @@ const MainRace = () => {
             <h3>Race ID: {race.Race_ID}</h3>
             <p><strong>Grand Prix ID:</strong> {race.GrandPrix_ID}</p>
             <p><strong>Date:</strong> {race.Date}</p>
+            <button
+              className="delete-btn"
+              onClick={() => handleDelete(race.Race_ID)}
+            >
+              Delete
+            </button>
           </div>
         ))}
       </div>

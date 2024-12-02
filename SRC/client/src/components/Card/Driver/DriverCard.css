@@ -91,3 +91,21 @@ select:focus {
   text-align: center;
   margin-bottom: 20px;
 }
+
+/* Delete Button */
+button.delete-btn {
+  background-color: #d43c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+button.delete-btn:hover {
+  background-color: #a82828;
+}
+

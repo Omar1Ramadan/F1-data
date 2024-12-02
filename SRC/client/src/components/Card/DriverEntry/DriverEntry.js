@@ -81,6 +81,26 @@ const DriverEntryCard = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch("http://localhost:5000/driverentry", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ DriverEntry_ID: id }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete the driver entry.");
+      }
+      setDriverEntries((prev) =>
+        prev.filter((entry) => entry.DriverEntry_ID !== id)
+      );
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   if (loading) {
     return <p>Loading driver entry data...</p>;
   }
@@ -105,6 +125,12 @@ const DriverEntryCard = () => {
             <p><strong>Start Date:</strong> {entry.Start_Date}</p>
             <p><strong>End Date:</strong> {entry.End_Date}</p>
             <p><strong>Driver Role:</strong> {entry.Driver_Role}</p>
+            <button
+              className="delete-btn"
+              onClick={() => handleDelete(entry.DriverEntry_ID)}
+            >
+              Delete
+            </button>
           </div>
         ))}
       </div>

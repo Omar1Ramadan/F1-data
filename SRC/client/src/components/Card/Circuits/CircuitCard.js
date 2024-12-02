@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./CircuitCard.css"; // Use the same Card.css for consistent styling
+import "./CircuitCard.css";
 
 const CircuitCard = () => {
   const [circuits, setCircuits] = useState([]);
@@ -9,12 +9,12 @@ const CircuitCard = () => {
   useEffect(() => {
     const fetchCircuits = async () => {
       try {
-        const response = await fetch("/circuit"); // Adjust endpoint as per your API
+        const response = await fetch("http://localhost:5000/circuit");
         if (!response.ok) {
           throw new Error("Failed to fetch circuit data.");
         }
         const data = await response.json();
-        setCircuits(data); // Set the array of circuits
+        setCircuits(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -25,6 +25,24 @@ const CircuitCard = () => {
     fetchCircuits();
   }, []);
 
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch("http://localhost:5000/circuit", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ Circuit_ID: id }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete the circuit.");
+      }
+      setCircuits((prev) => prev.filter((circuit) => circuit.Circuit_ID !== id));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   if (loading) {
     return <p>Loading circuit data...</p>;
   }
@@ -33,18 +51,19 @@ const CircuitCard = () => {
     return <p className="error">{error}</p>;
   }
 
-  if (!circuits || circuits.length === 0) {
-    return <p>No circuit data available.</p>;
-  }
-
   return (
-    <div className="card-container">
-      {circuits.map((circuit) => (
-        <div key={circuit.Circuit_ID} className="card">
-          <h3>{circuit.Name}</h3>
-          <p><strong>Country:</strong> {circuit.Country}</p>
-        </div>
-      ))}
+    <div className="circuit-page">
+      <div className="circuit-card-container">
+        {circuits.map((circuit) => (
+          <div key={circuit.Circuit_ID} className="card">
+            <h3>{circuit.Name}</h3>
+            <p><strong>Country:</strong> {circuit.Country}</p>
+            <button className="delete-btn" onClick={() => handleDelete(circuit.Circuit_ID)}>
+              Delete
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

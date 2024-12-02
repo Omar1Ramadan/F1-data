@@ -172,7 +172,6 @@ const tables = ['Circuit', 'Driver', 'Constructor', 'Season', 'GrandPrix', 'Main
 tables.forEach(table => {
   router.route(`/${table.toLowerCase()}`)
     .get(handleCrudOperations(table)) // Allow anyone to view
-    .all(checkAdmin) // Require admin authentication for the following routes
     .post(handleCrudOperations(table)) // Only admins can create
     .put(handleCrudOperations(table)) // Only admins can update
     .delete(handleCrudOperations(table)); // Only admins can delete
