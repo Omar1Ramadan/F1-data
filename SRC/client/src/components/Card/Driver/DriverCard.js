@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import "./DriverCard.css";
 
 const ENDPOINTS = [
-  String.raw("/driver"), 
-  String.raw("/driver?join=RaceResult%20ON%20Driver.Driver_ID%20%3D%20RaceResult.Driver_ID&where=RaceResult.Position%20%3D%201&limit=5"),
-  String.raw("/driver?where=Total_Points%20%3E%20100&orderBy=Total_Points%20DESC"),
-  String.raw("/driver?join=DriverEntry%20ON%20Driver.Driver_ID%20%3D%20DriverEntry.Driver_ID&join=Constructor%20ON%20DriverEntry.Constructor_ID%20%3D%20Constructor.Constructor_ID&where=Driver.Gender%20%3D%20'M'%20AND%20Constructor.Country%20%3D%20'Germany"),
-  String.raw("/driver?where=Total_Race_Wins%20%3E%207&orderBy=Total_Race_Wins%20DESC&limit=10"),
-  String.raw("/Constructor?where=Total_Race_Wins%20%3E%2022&orderBy=Total_Race_Wins%20DESC&limit=10")
+  "/driver", 
+  "/driver?join=RaceResult%20ON%20Driver.Driver_ID%20%3D%20RaceResult.Driver_ID&where=RaceResult.Position%20%3D%201&limit=5",
+  "/driver?where=Total_Points%20%3E%20100&orderBy=Total_Points%20DESC",
+  "/driver?join=DriverEntry%20ON%20Driver.Driver_ID%20%3D%20DriverEntry.Driver_ID&join=Constructor%20ON%20DriverEntry.Constructor_ID%20%3D%20Constructor.Constructor_ID&where=Driver.Gender%20%3D%20'M'%20AND%20Constructor.Country%20%3D%20'Germany",
+  "/driver?where=Total_Race_Wins%20%3E%207&orderBy=Total_Race_Wins%20DESC&limit=10",
+  "/Constructor?where=Total_Race_Wins%20%3E%2022&orderBy=Total_Race_Wins%20DESC&limit=10"
 ]
 
 const DriverCard = () => {
