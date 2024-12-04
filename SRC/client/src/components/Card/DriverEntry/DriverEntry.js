@@ -83,7 +83,7 @@ const DriverEntryCard = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch("http://localhost:5000/driverentry", {
+      const response = await fetch("/driverentry", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

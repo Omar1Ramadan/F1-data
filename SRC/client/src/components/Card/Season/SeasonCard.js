@@ -7,7 +7,7 @@ const SeasonCard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newSeason, setNewSeason] = useState({
     Season_ID: "",
-    Driver_Winner: "",
+    Name: "",
     Constructor_Winner: "",
   });
   const [error, setError] = useState(null);
@@ -16,7 +16,7 @@ const SeasonCard = () => {
   useEffect(() => {
     const fetchSeasons = async () => {
       try {
-        const response = await axios.get("/season");
+        const response = await axios.get("/Season?join=Driver%20ON%20Season.driver_winner%20%3D%20driver.driver_id&limit=5");
         setSeasons(response.data);
       } catch (err) {
         setError("Failed to fetch season data.");
@@ -53,7 +53,7 @@ const SeasonCard = () => {
       closeModal();
       setNewSeason({
         Season_ID: "",
-        Driver_Winner: "",
+        Name: "",
         Constructor_Winner: "",
       });
     } catch (err) {
@@ -84,7 +84,7 @@ const SeasonCard = () => {
         {seasons.map((season) => (
           <div key={season.Season_ID} className="season-card">
             <h3>Season: {season.Season_ID}</h3>
-            <p><strong>Driver Winner ID:</strong> {season.Driver_Winner}</p>
+            <p><strong>Winning Driver:</strong> {season.Name}</p>
             <p><strong>Constructor Winner ID:</strong> {season.Constructor_Winner}</p>
             <button
               className="delete-btn"
@@ -115,7 +115,7 @@ const SeasonCard = () => {
                 <input
                   type="text"
                   name="Driver_Winner"
-                  value={newSeason.Driver_Winner}
+                  value={newSeason.Name}
                   onChange={handleInputChange}
                   required
                 />
