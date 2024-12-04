@@ -48,7 +48,7 @@ function handleCrudOperations(table) {
           });
           break;
         }
-
+        
         case 'POST': {
           if (!req.session.admin) {
             return res.status(403).send('Access denied');
