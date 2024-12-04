@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../utils/db');
-const checkAdmin = require('../middleware/auth');
 const { buildQuery } = require('../utils/queryBuilder');
 
 // Mapping of table names to their primary key attributes
@@ -50,9 +49,6 @@ function handleCrudOperations(table) {
         }
         
         case 'POST': {
-          if (!req.session.admin) {
-            return res.status(403).send('Access denied');
-          }
 
           const isArray = Array.isArray(req.body);
           const postColumns = isArray ? Object.keys(req.body[0]).join(', ') : Object.keys(req.body).join(', ');
@@ -83,10 +79,6 @@ function handleCrudOperations(table) {
         }
 
         case 'PUT': {
-          if (!req.session.admin) {
-            return res.status(403).send('Access denied');
-          }
-
           const putId = req.body[primaryKey];
           const putUpdates = Object.keys(req.body)
             .filter(key => key !== primaryKey && key !== 'password') // Exclude password
@@ -124,10 +116,6 @@ function handleCrudOperations(table) {
         }
 
         case 'DELETE': {
-          if (!req.session.admin) {
-            return res.status(403).send('Access denied');
-          }
-
           const conditions = Object.keys(req.body)
             .map(key => `${key} = ?`)
             .join(' AND ');
